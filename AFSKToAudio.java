@@ -1,7 +1,6 @@
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -18,6 +17,8 @@ public class AFSKToAudio {
     private static final int SAMPLES_PER_BIT = (int) (SAMPLE_RATE / BAUD_RATE);
     
     /**
+     * This method was AI assisted. I think I know what it's doing, but I want to gain a strong grasp on this if
+     * I want to be putting out code that utilizes the concept of direct writing of PCM data.
      * 
      * @param data the binary data to generate raw pcm data for
      * @return raw pcm data
@@ -62,6 +63,7 @@ public class AFSKToAudio {
 
     /**
      * i will be honest i am not quite sure about this
+     * 
      * @param pcmData raw pcm data to convert to a wav file
      * @param filename output file name of the wav containing pcmData
      * @throws IOException
@@ -74,7 +76,7 @@ public class AFSKToAudio {
         try(ByteArrayInputStream bais = new ByteArrayInputStream(pcmData);
         AudioInputStream ais = new AudioInputStream(bais, format, pcmData.length / format.getFrameSize())){
             AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
-        } catch (IOException e){
+        } catch (IOException e){ // odd. figure out what IOException this may throw.
             System.err.println("error saving wav file.");
         }
 

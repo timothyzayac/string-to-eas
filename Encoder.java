@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class Encoder {
 
@@ -99,36 +98,7 @@ public class Encoder {
     }
 
     public static void main(String[] args) throws IOException {
-        // String testString = "Human-Readable Alert Text: An EAS Participant has issued a Required Weekly Test for Alachua, Florida; beginning at 8:30 AM on May 24th, 2026 and ending at 9:00 AM on May 24th, 2026. Message from KXYZ/FM-";
-        // System.out.println(testString); // print the test string
-        // System.out.println();
-
-        // byte[] data = stringToEightBitAscii(testString); // convert the string to ascii, with an eighth null bit (leading zero) to complete an eight bit byte
-        // System.out.println(Arrays.toString(data));
-        // System.out.println();
-
-        // data = prependPreamble(data);
-        // System.out.println(Arrays.toString(data));
-
-        // byte[] easData = byteReverse(data); // reverses the order of the bits, in order to comply with the required "LSB first"
-        // System.out.println(Arrays.toString(easData));
-        // System.out.println();
-
-        // byte[] audio = AFSKToAudio.generateRawAudio(easData);
-        // System.out.println(audio.length);
-        // System.out.println();
-
-        // AFSKToAudio.pcmToWave(audio, "long text");
-
-        // byte[] backData = byteReverse(easData); // do it again to ensure property of involution
-        // System.out.println(Arrays.toString(backData));
-        // System.out.println();
-
-        // System.out.println(eightBitAsciiToString(backData)); // convert ascii values back to a string
-        // System.out.println();
-
-        stringToAlert("Kaypooma", "kaypooma");
-
+        stringToAlert("ZCZC-EAS-NPT-000000+0100-0560700-TIMOTHYZ-", "output");
     }
 
 }
