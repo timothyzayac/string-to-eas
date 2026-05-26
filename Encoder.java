@@ -97,8 +97,53 @@ public class Encoder {
         AFSKToAudio.pcmToWave(data, filename);
     }
 
-    public static void main(String[] args) throws IOException {
-        stringToAlert("ZCZC-EAS-NPT-000000+0100-0560700-TIMOTHYZ-", "output");
+    /**
+     * String to alert with parameters for all AFSK frequencies
+     * @param alertText ascii text to be converted
+     * @param filename filename of output wav
+     * @param sampleRate the number of audio samples per second.
+     * @param baudRate the number of signal changes per second
+     * @param markFrequency audio frequency representing binary 1
+     * @param spaceFrequency audio frequency representing binary 0
+     * @throws IOException for when wav cannot be made
+     */
+    public static void stringToAlert(String alertText, String filename, int sampleRate, double baudRate, double markFrequency, double spaceFrequency) throws IOException{
+        byte[] data = stringToEightBitAscii(alertText);
+        data = prependPreamble(data);
+        data = byteReverse(data);
+        data = AFSKToAudio.generateRawAudio(data, sampleRate, baudRate, markFrequency, spaceFrequency);
+        AFSKToAudio.pcmToWave(data, filename);
     }
+
+    /**
+     * main method expecting an alert text string and an output filename string.
+     * @param args string array of 
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException { // minimum params
+        if(args.length != 2){
+            System.err.println("Error: wrong number of String arguments, expected 2, got " + args.length);
+            System.err.println("Expected usage: java -jar string-to-eas.jar <alert text> <output filename>");
+        }
+        stringToAlert(args[0], args[1]);
+    }
+
+    // /**
+    //  * A (currently non-functional) method that allows custom parameters for frequencies.
+    //  * @param args
+    //  * @param iargs
+    //  * @throws IOException
+    //  */
+    // public static void main(String[] args, double[] iargs) throws IOException{
+    //     if(args.length != 2){
+    //         System.err.println("Error: wrong number of String arguments, expected 2, got " + args.length);
+    //         System.err.println("Expected usage: java -jar string-to-eas.jar <alert text>, <output filename>, <sample rate>, <baud rate>, <mark frequency>, <space frequency>");
+    //     }
+    //     if(iargs.length != 4){
+    //         System.err.println("Error: wrong number of doubke arguments, expected 4, got " + args.length);
+    //         System.err.println("Expected usage: java -jar string-to-eas.jar <alert text>, <output filename>, <sample rate>, <baud rate>, <mark frequency>, <space frequency>");
+    //     }
+    //     stringToAlert(args[0], args[1], ((int) (iargs[0])), iargs[1], iargs[2], iargs[3]);
+    // }
 
 }

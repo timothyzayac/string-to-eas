@@ -10,22 +10,30 @@ import java.io.File;
 import java.io.IOException;
 
 public class AFSKToAudio {
+
+    // EAS official specified rates.
     private static final int SAMPLE_RATE = 44100; // samples per second
     private static final double BAUD_RATE = 520.83; // bits per second
     private static final double MARK_RATE = 2083.3; // bitwise 1
     private static final double SPACE_RATE = 1562.5; //bitwise 0
-    private static final int SAMPLES_PER_BIT = (int) (SAMPLE_RATE / BAUD_RATE);
     
+
     /**
      * This method was AI assisted. I think I know what it's doing, but I want to gain a strong grasp on this if
      * I want to be putting out code that utilizes the concept of direct writing of PCM data.
      * 
      * @param data the binary data to generate raw pcm data for
-     * @return raw pcm data
+     * @param sampleRate the number of audio samples per second.
+     * @param baudRate the number of signal changes per second
+     * @param markRate audio frequency representing a binary 1.
+     * @param spaceRate audio frequency representing a binary 0.
+     * @return raw pcm data array of bytes
      */
-    public static byte[] generateRawAudio(byte[] data){
+    public static byte[] generateRawAudio(byte[] data, int sampleRate, double baudRate, double markRate, double spaceRate){
+        int samplesPerBit = (int) (sampleRate / baudRate);
+        
         int totalBits = data.length * 8;
-        int totalSamples = (int) SAMPLES_PER_BIT * totalBits; // length of raw data array
+        int totalSamples = (int) samplesPerBit * totalBits; // length of raw data array
 
         ByteBuffer buffer = ByteBuffer.allocate(totalSamples * 2);
         buffer.order(ByteOrder.BIG_ENDIAN);
@@ -39,19 +47,19 @@ public class AFSKToAudio {
                 double freq;
 
                 if(bit == 1){
-                    freq = MARK_RATE;
+                    freq = markRate;
                 }
                 else{
-                    freq = SPACE_RATE;
+                    freq = spaceRate;
                 }
 
                 // sample per bit individual (making sine waves holy)
-                for(int s = 0; s < SAMPLES_PER_BIT; s++){
+                for(int s = 0; s < samplesPerBit; s++){
                     short sample = (short) (Math.sin(phase) * Short.MAX_VALUE); // makes sample of phase of frequency and normalizes it
                     buffer.putShort(sample);
 
 
-                    phase = phase + ((2 * Math.PI * freq) / SAMPLE_RATE);
+                    phase = phase + ((2 * Math.PI * freq) / sampleRate);
                 }
 
 
@@ -62,10 +70,20 @@ public class AFSKToAudio {
     }
 
     /**
+     * 
+     * @param data the binary data to generate raw PCM data for
+     * @return raw PCM data array of bytes
+     */
+    public static byte[] generateRawAudio(byte[] data){
+        return generateRawAudio(data, SAMPLE_RATE, BAUD_RATE, MARK_RATE, SPACE_RATE);
+    }
+
+    /**
      * i will be honest i am not quite sure about this
      * 
      * @param pcmData raw pcm data to convert to a wav file
      * @param filename output file name of the wav containing pcmData
+     * 
      * @throws IOException
      */
     public static void pcmToWave(byte[] pcmData, String filename) throws IOException{
