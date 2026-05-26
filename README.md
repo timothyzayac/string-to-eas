@@ -22,15 +22,15 @@ You can, of course, also encode a traditional SAME message, which works the same
 This program uses a multi-step algorithm to reach its final result. For this example, I'll use the string "A". Reasoning behind the specification is included in hyperlinks.
 
 ### `stringToEightBitAscii()`
-In the first step, a string is turned into an array of bytes containing each character's corresponding ASCII value. Since they're seven-bit values from ASCII, I make sure to "bit-stuff" a final 0 "null bit" on the left, by using a bitwise operation (`& 0x7F`) to ensure each byte contains exactly 8 bits of data. [47 CFR 11.31(a)(1)](https://www.ecfr.gov/current/title-47/part-11#p-11.31(a)(1))
+In the first step, a string is turned into an array of bytes containing each character's corresponding ASCII value. Since they're seven-bit values from ASCII, I make sure to "bit-stuff" a final 0 "null bit" on the left, by using a bitwise operation (`& 0x7F`) to ensure each byte contains exactly 8 bits of data. [47 CFR 11.31(a)(1)](https://www.ecfr.gov/current/title-47/part-11#p-11.31(a)(1))  
 `[A]` → `[0x41]` (or `[0b01000001]`)
 
 ### `prependPreamble()`
-Next, a "preamble" is added to the message, containing of 16 repeated bytes of `0xAB` (or `0b10101011`) to calibrate decoding rates for a reciever. To do this, I prepended 16 empty spaces before any given message and fill them all with the same byte, to replicate this mandate. [47 CFR 11.31(c)](https://www.ecfr.gov/current/title-47/part-11/subpart-B#p-11.31(c))
+Next, a "preamble" is added to the message, containing of 16 repeated bytes of `0xAB` (or `0b10101011`) to calibrate decoding rates for a reciever. To do this, I prepended 16 empty spaces before any given message and fill them all with the same byte, to replicate this mandate. [47 CFR 11.31(c)](https://www.ecfr.gov/current/title-47/part-11/subpart-B#p-11.31(c))  
 `[0x41]` → `[0xAB], [0xAB] ...16 times total... [0xAB], [0x41]`
 
 ### `byteReverse()`
-Next, to comply with the requirement that all alert data is transmitted least significant bit (LSB) first, the bit order of all the bytes is reversed iteratively. [NATIONAL WEATHER SERVICE INSTRUCTION 10-1712 code A.1.1.1](https://www.weather.gov/media/directives/010_pdfs_archived/pd01017012a.pdf)
+Next, to comply with the requirement that all alert data is transmitted least significant bit (LSB) first, the bit order of all the bytes is reversed iteratively. [NATIONAL WEATHER SERVICE INSTRUCTION 10-1712 code A.1.1.1](https://www.weather.gov/media/directives/010_pdfs_archived/pd01017012a.pdf)  
 `[0xAB]...[0x41]` (`[0b10101011]...[0b01000001]`) → `[0xD5]...[0x82]` (`[0b11010101]...[0b10000010]`)
 
 ### `generateRawAudio()`
